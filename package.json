@@ -26,7 +26,8 @@
   },
   "scripts": {
     "build": "bunx tsc",
-    "test": "bun run build && node dist/index.js",
+    "test": "bun run build && node dist/index.js hi",
+    "ax": "bun run build && node dist/index.js",
     "publish": "bunx tsc && bunx np"
   },
   "files": [
