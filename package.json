@@ -28,9 +28,7 @@
     "build": "rm -rf dist && bunx tsc",
     "test": "bun run build && node dist/index.js hi",
     "ax": "bun run build && node dist/index.js",
-    "patch": "bun run build && npx np patch",
-    "minor": "bun run build && npx np minor",
-    "major": "bun run build && npx np major"
+    "publish": "bun run build && npx np"
   },
   "files": [
     "dist"
