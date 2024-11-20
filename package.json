@@ -1,6 +1,6 @@
 {
   "name": "ai-x-terminal",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "A command-line tool that enhances your terminal with AI capabilities using OpenAI's API.",
   "keywords": [
     "AI",
