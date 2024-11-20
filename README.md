@@ -24,14 +24,6 @@ bun add -g ai-x-terminal
 - **OpenAI Integration**:
   - Upon first run, you will be prompted to input your OpenAI API key, which will be securely stored for future use.
 
-### Configuration
-
-- On the first run, you will be asked to input your OpenAI API key. This key is securely stored on your machine for future requests.
-
-- It's crucial to ensure your API key is kept confidential, as it provides access to the OpenAI services.
-
-These examples should help users understand how to effectively leverage the `AI X Terminal` tool for various use cases in their projects. Adjust and expand these examples based on user feedback and specific functionalities of your tool.
-
 ## Usage Examples
 
 After installing AI X Terminal globally, you can use it via the command line as demonstrated below:
