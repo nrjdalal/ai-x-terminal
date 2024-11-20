@@ -28,7 +28,7 @@
     "build": "rm -rf dist && bunx tsc",
     "test": "bun run build && node dist/index.js hi",
     "ax": "bun run build && node dist/index.js",
-    "publish": "bun run build && npx np"
+    "release": "bun run build && npx np"
   },
   "files": [
     "dist"
@@ -36,14 +36,14 @@
   "engines": {
     "node": ">=16"
   },
-  "devDependencies": {
-    "@types/node": "^22.9.0",
-    "typescript": "^5.6.3"
-  },
   "dependencies": {
     "@inquirer/password": "^4.0.2",
     "commander": "^12.1.0",
     "globby": "^14.0.2",
     "openai": "^4.72.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
   }
 }
