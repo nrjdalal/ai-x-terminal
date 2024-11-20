@@ -74,7 +74,7 @@ async function main() {
 
         const streamCompletion = async (prompt: string) => {
           const stream = await openai.chat.completions.create({
-            model: 'gpt-4o',
+            model: 'gpt-4o-2024-08-06',
             messages: [
               {
                 role: 'system',
@@ -85,11 +85,15 @@ async function main() {
             stream: true,
           })
 
+          console.log('')
+
           for await (const part of stream) {
             if (part.choices && part.choices[0]?.delta?.content) {
               process.stdout.write(part.choices[0].delta.content)
             }
           }
+
+          console.log('')
         }
 
         let prompt = args.join(' ')

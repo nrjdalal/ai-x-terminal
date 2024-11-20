@@ -58,20 +58,6 @@ ax -w "Provide an overview of this project."
 
 This command will read all files in the current directory and generate a response based on the combined contents of those files.
 
-### Advanced Examples
-
-1. **Combining File and Message**: If you want to analyze a specific file along with providing a custom message:
-
-   ```bash
-   ax -f README.md "Analyze the structure and suggest improvements."
-   ```
-
-2. **Workspace Analysis**: For comprehensive feedback across all files in a directory:
-
-   ```bash
-   ax -w "Review this codebase and identify potential optimizations."
-   ```
-
 ## Note
 
 Feel free to contribute or raise issues if you encounter any!
@@ -79,3 +65,11 @@ Feel free to contribute or raise issues if you encounter any!
 ---
 
 **Disclaimer**: Make sure to keep your API key confidential and never share it publicly.
+
+---
+
+## Upcoming Features
+
+- **Set custom prompt**: Allow users to set a custom prompt for the AI.
+- **Multiple API support**: Integrate with other AI APIs for enhanced functionality.
+- **Contextual AI**: Implement a feature to maintain context across multiple requests.
