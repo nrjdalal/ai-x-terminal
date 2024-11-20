@@ -27,8 +27,7 @@
   "scripts": {
     "build": "bunx tsc",
     "test": "bun run build && node dist/index.js",
-    "start": "bun run build && node dist/index.js",
-    "prepare": "bun run build"
+    "publish": "bunx tsc && bunx np"
   },
   "files": [
     "dist"
