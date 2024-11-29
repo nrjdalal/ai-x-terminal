@@ -10,6 +10,10 @@
 
 **AI X Terminal** is a powerful command-line tool that integrates OpenAI's API to enhance your terminal experience with AI capabilities. It supports appending file contents or entire workspaces to requests, thus allowing a seamless integration with your existing projects.
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/cMOdHtazsRuyjYHePQbhsNSJX.svg)](https://asciinema.org/a/cMOdHtazsRuyjYHePQbhsNSJX)
+
 ## Installation
 
 ```bash
