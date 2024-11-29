@@ -58,16 +58,17 @@ clear
 # Loop through each cmd and process based on mode
 for cmd in "${cmds[@]}"; do
   # Show the prompt with > symbol and the correct colors
-  echo -e -n "\nnrjdalal \033[0;36m~/Desktop/ai-x-terminal\033[0m \033[0;37mmain\033[0m\n\033[0;32m>\033[0m "
-  sleep 3
+  echo -e -n "nrjdalal \033[0;36m~/Desktop/ai-x-terminal\033[0m \033[0;37mmain\033[0m\n\033[0;32m>\033[0m "
+  sleep 2
 
   # Print the command with typing effect (including the dash correctly)
   typing "$cmd"
-  sleep 3
+  sleep 1
 
   # If mode is "run", execute the cmd
   if [[ "$mode" == "run" ]]; then
     eval "$cmd" # Executes the cmd
+    echo        # Add a new line after the command output
   fi
 
 done
