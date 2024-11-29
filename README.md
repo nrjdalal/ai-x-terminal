@@ -1,5 +1,7 @@
 # AI X Terminal
 
+> Links: [github repo](https://github.com/nrjdalal/ai-x-terminal) / [npm package](https://www.npmjs.com/package/ai-x-terminal)
+
 ![npm version](https://img.shields.io/npm/v/ai-x-terminal)
 ![npm downloads](https://img.shields.io/npm/dt/ai-x-terminal)
 ![github issues](https://img.shields.io/github/issues/nrjdalal/ai-x-terminal)
