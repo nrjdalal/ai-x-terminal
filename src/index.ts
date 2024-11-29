@@ -120,6 +120,8 @@ async function main() {
         }
 
         let prompt = args.join(' ')
+        let fileCount = 0
+        const query = prompt
 
         if (opts.file) {
           const searchFile = opts.file
@@ -133,6 +135,8 @@ async function main() {
 
           if (file) {
             const fileContents = fs.readFileSync(file, 'utf-8').trim() + '\n---'
+
+            fileCount++
 
             prompt += `\n\n--- ${file}\n${fileContents}`
           } else {
@@ -150,6 +154,8 @@ async function main() {
           for (const file of files) {
             const fileContents = fs.readFileSync(file, 'utf-8').trim() + '\n---'
 
+            fileCount++
+
             prompt += `\n\n--- ${file}\n${fileContents}`
           }
         }
@@ -160,10 +166,27 @@ async function main() {
             ignore: excludePatterns,
           })
 
-          prompt += `\n\n--- Files ---\n${files.join('\n')}\n-------------`
+          fileCount = files.length
+
+          prompt += `\n\n--- files listing ---\n${files.join(
+            '\n'
+          )}\n---------------------`
         }
 
-        console.log('\x1b[32m%s\x1b[0m', prompt)
+        console.log(
+          '\nPrompt:',
+          prompt.length < 1000
+            ? `\x1b[32m${prompt}\x1b[0m`
+            : `\x1b[32m${
+                query +
+                '\n\n' +
+                '--- ' +
+                fileCount +
+                ' files attacted but content is not displayed as prompt is ' +
+                prompt.length +
+                ' characters ---'
+              }\x1b[0m`
+        )
 
         await streamCompletion(prompt)
       }
