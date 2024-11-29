@@ -11,7 +11,12 @@
     "Automation",
     "Productivity",
     "Command-line",
-    "Workflow"
+    "Workflow",
+    "Developer-tools",
+    "File-analysis",
+    "Code-analysis",
+    "Coding-assistant",
+    "Workspace-analysis"
   ],
   "homepage": "https://github.com/nrjdalal/ai-x-terminal#readme",
   "bugs": {
