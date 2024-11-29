@@ -14,20 +14,19 @@ process.on('SIGTERM', () => process.exit(0))
 const excludePatterns = [
   '.git/**',
   '.Trash/**',
-  'node_modules/**',
-  'Library/**',
-  'Pictures/**',
-  'Downloads/**',
-  'Desktop/**',
-  'Applications/**',
   'Applications \\(Parallels\\)/**',
+  'Applications/**',
+  'Desktop/**',
   'Documents/**',
+  'Downloads/**',
+  'FontBase/**',
+  'Library/**',
   'Movies/**',
   'Music/**',
+  'node_modules/**',
   'Parallels/**',
-  'FontBase/**',
-  'Public/**',
   'Pictures/**',
+  'Public/**',
 ]
 
 async function main() {
@@ -36,16 +35,23 @@ async function main() {
     .option('-f, --file <file>', 'append file content to prompt')
     .option('-w, --workspace', 'append all files in directory to prompt')
     .option('-ls, --list', 'list all filenames in directory')
+    .option('-p, --persona <persona>', 'set custom persona')
     .arguments('<args...>')
     .action(
       async (
         args: string[],
-        opts: { file: string; workspace: boolean; list: boolean }
+        opts: {
+          file: string
+          workspace: boolean
+          list: boolean
+          persona: string
+        }
       ) => {
-        const configFile = path.join(os.homedir(), '/.config/.ai-terminal')
+        const keyFile = path.join(os.homedir(), '/.config/.ai-terminal')
+        const configFile = path.join(process.cwd(), '.ax.json')
 
-        if (!fs.existsSync(configFile)) {
-          console.error('config file not found')
+        if (!fs.existsSync(keyFile)) {
+          console.error('API Key not found. Please enter your OpenAI API key.')
 
           const api = await password({
             message: 'API Key',
@@ -81,7 +87,7 @@ async function main() {
           const isValidApiKey = await testApiKey(api)
 
           if (isValidApiKey) {
-            fs.writeFileSync(configFile, api)
+            fs.writeFileSync(keyFile, api)
             console.log('API Key saved to config file.')
           } else {
             console.error('Invalid API key. Exiting...')
@@ -89,11 +95,38 @@ async function main() {
           }
         }
 
-        const apiKey = fs.readFileSync(configFile, 'utf-8').trim()
+        const apiKey = fs.readFileSync(keyFile, 'utf-8').trim()
 
         const openai = new OpenAI({
           apiKey,
         })
+
+        let persona = 'You are a helpful assistant.'
+        let isConfigFileNewlyCreated = false
+        if (fs.existsSync(configFile)) {
+          const configData = JSON.parse(fs.readFileSync(configFile, 'utf-8'))
+          persona = configData.persona || persona
+        } else {
+          isConfigFileNewlyCreated = true
+        }
+
+        if (opts.persona) {
+          persona = opts.persona
+          fs.writeFileSync(configFile, JSON.stringify({ persona }, null, 2))
+          console.log('\x1b[32m\nPersona updated.\x1b[0m')
+        }
+
+        if (isConfigFileNewlyCreated) {
+          const gitignorePath = path.join(process.cwd(), '.gitignore')
+          if (fs.existsSync(gitignorePath)) {
+            const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8')
+            if (!gitignoreContent.includes('.ax.json')) {
+              fs.appendFileSync(gitignorePath, '\n# ai-x-terminal\n.ax.json\n')
+            }
+          } else {
+            fs.writeFileSync(gitignorePath, '# ai-x-terminal\n.ax.json\n')
+          }
+        }
 
         const streamCompletion = async (prompt: string) => {
           const stream = await openai.chat.completions.create({
@@ -101,7 +134,7 @@ async function main() {
             messages: [
               {
                 role: 'system',
-                content: 'You are a helpful assistant.',
+                content: persona,
               },
               { role: 'user', content: prompt },
             ],
