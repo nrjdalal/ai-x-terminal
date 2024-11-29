@@ -11,14 +11,37 @@ import { globby } from 'globby'
 process.on('SIGINT', () => process.exit(0))
 process.on('SIGTERM', () => process.exit(0))
 
+const excludePatterns = [
+  '.git/**',
+  '.Trash/**',
+  'node_modules/**',
+  'Library/**',
+  'Pictures/**',
+  'Downloads/**',
+  'Desktop/**',
+  'Applications/**',
+  'Applications \\(Parallels\\)/**',
+  'Documents/**',
+  'Movies/**',
+  'Music/**',
+  'Parallels/**',
+  'FontBase/**',
+  'Public/**',
+  'Pictures/**',
+]
+
 async function main() {
   program
     .name('x')
     .option('-f, --file <file>', 'append file content to prompt')
     .option('-w, --workspace', 'append all files in directory to prompt')
+    .option('-ls, --list', 'list all filenames in directory')
     .arguments('<args...>')
     .action(
-      async (args: string[], opts: { file: string; workspace: boolean }) => {
+      async (
+        args: string[],
+        opts: { file: string; workspace: boolean; list: boolean }
+      ) => {
         const configFile = path.join(os.homedir(), '/.config/.ai-terminal')
 
         if (!fs.existsSync(configFile)) {
@@ -103,6 +126,7 @@ async function main() {
 
           const files = await globby('**/*', {
             gitignore: true,
+            ignore: excludePatterns,
           })
 
           const file = files.find((f) => f.includes(searchFile))
@@ -118,8 +142,9 @@ async function main() {
         }
 
         if (opts.workspace) {
-          const files = await globby('**/*', {
+          const files = await globby(['**/*', '**/.*'], {
             gitignore: true,
+            ignore: excludePatterns,
           })
 
           for (const file of files) {
@@ -128,6 +153,17 @@ async function main() {
             prompt += `\n\n--- ${file}\n${fileContents}`
           }
         }
+
+        if (opts.list) {
+          const files = await globby(['**/*', '**/.*'], {
+            gitignore: true,
+            ignore: excludePatterns,
+          })
+
+          prompt += `\n\n--- Files ---\n${files.join('\n')}\n-------------`
+        }
+
+        console.log('\x1b[32m%s\x1b[0m', prompt)
 
         await streamCompletion(prompt)
       }
