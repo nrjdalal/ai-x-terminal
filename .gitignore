@@ -176,6 +176,3 @@ dist
 
 # custom
 bun.lockb
-
-# asciinema
-*.cast
