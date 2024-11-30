@@ -17,7 +17,7 @@ export async function streamCompletion(
     stream: true,
   })
 
-  let buffer = '' // Holds the ongoing stream
+  let buffer = '\n' // Holds the ongoing stream
   let insideCodeBlock = false // Tracks if inside a code block
   let spinner: Ora | null = null // Spinner instance
 
