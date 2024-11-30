@@ -36,6 +36,7 @@ bun add -g ai-x-terminal
   - `-ls, --list`: List all filenames in the current directory.
   - `-p, --persona <persona>`: Customize the AI's persona for responses.
 - **OpenAI Integration**: Initialize with your OpenAI API key for future use without re-entering.
+- **Code Syntax Highlighting**: Automatically detects code snippets and formats them for better readability.
 
 ## Usage Examples
 
@@ -89,7 +90,6 @@ Keep your OpenAI API key confidential. Never share it publicly.
 
 ## Upcoming Features
 
-- Custom prompt configurations
 - Multi-API support
 - Contextual AI enhancements
 

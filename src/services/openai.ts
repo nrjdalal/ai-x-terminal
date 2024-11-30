@@ -1,6 +1,7 @@
 import { OpenAI } from 'openai'
 import chalk from '../utils/chalk.js'
-import { highlight } from 'cli-highlight'
+import ora, { Ora } from 'ora'
+import { colorCode } from '../utils/colorCode.js'
 
 export async function streamCompletion(
   openai: OpenAI,
@@ -10,78 +11,74 @@ export async function streamCompletion(
   const stream = await openai.chat.completions.create({
     model: 'gpt-4o-2024-08-06',
     messages: [
-      {
-        role: 'system',
-        content: persona,
-      },
+      { role: 'system', content: persona },
       { role: 'user', content: prompt },
     ],
     stream: true,
   })
 
-  let chunker: any = ''
-  let codeblock = 0
-  let holdMode = false
-  let slidingWindow = []
-  let turnOffHoldMode = false
+  let buffer = '\n' // Holds the ongoing stream
+  let insideCodeBlock = false // Tracks if inside a code block
+  let spinner: Ora | null = null // Spinner instance
 
   for await (const part of stream) {
     if (part.choices && part.choices[0]?.delta?.content) {
       const chunk = part.choices[0].delta.content
 
-      if (turnOffHoldMode) {
-        holdMode = false
-        turnOffHoldMode = false
-      }
+      buffer += chunk // Append the chunk to the buffer
 
-      if (holdMode || chunk.includes('`')) {
-        holdMode = true
-        chunker += chunk
-        slidingWindow.push(chunk)
+      while (buffer.includes(`\`\`\``)) {
+        const [before, after] = buffer.split(`\`\`\``, 2)
 
-        if (slidingWindow.length === 3) {
-          if (slidingWindow.join('').includes('```')) {
-            if (codeblock === 1) {
-              codeblock--
-
-              turnOffHoldMode = true
-              // chunker = chunker.split('```')
-
-              // const precode = chunker[0]
-              // const code = {
-              //   language: chunker[1].split('\n')[0],
-              //   content: chunker[1].split('\n').slice(1).join('\n'),
-              // }
-              // const postcode = chunker[2]
-
-              // process.stdout.write(
-              //   precode +
-              //     highlight(code.content, {
-              //       language: code.language,
-              //       ignoreIllegals: true,
-              //     }) +
-              //     postcode
-              // )
-
-              process.stdout.write(chalk.green(chunker))
-              chunker = ''
-            }
-            if (codeblock === 0) codeblock++
+        if (insideCodeBlock) {
+          // Closing backticks detected
+          if (spinner) {
+            spinner.stop() // Stop the spinner
+            spinner = null // Clear the spinner reference
           }
+          process.stdout.write(colorCode(`\`\`\`${before}\`\`\``))
+          insideCodeBlock = false
+        } else {
+          // Opening backticks detected
+          process.stdout.write(chalk.yellow(before))
+          insideCodeBlock = true
 
-          if (codeblock !== 1) {
-            turnOffHoldMode = true
-            process.stdout.write(chalk.green(chunker))
-            chunker = ''
+          // Start the spinner when inside a code block
+          if (!spinner) {
+            spinner = ora({ text: 'Writing code...', spinner: 'dots' }).start()
           }
-
-          slidingWindow = []
         }
+
+        buffer = after // Update the buffer with the remaining data
       }
 
-      if (!holdMode) {
-        process.stdout.write(chunk)
+      // If no backticks detected, print normally if not inside a code block
+      if (!insideCodeBlock) {
+        if (spinner) {
+          spinner.stop() // Stop the spinner for non-code block text
+          spinner = null
+        }
+        process.stdout.write(buffer)
+        buffer = '' // Clear the buffer
       }
     }
+  }
+
+  // Flush remaining buffer after the stream ends
+  if (buffer) {
+    if (insideCodeBlock) {
+      if (spinner) {
+        spinner.stop() // Stop the spinner for leftover code
+        spinner = null
+      }
+      process.stdout.write(chalk.blue(buffer))
+    } else {
+      process.stdout.write(buffer)
+    }
+  }
+
+  // Ensure spinner is stopped after stream ends
+  if (spinner) {
+    spinner.stop()
   }
 }
