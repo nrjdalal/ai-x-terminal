@@ -1,6 +1,6 @@
 # AI X Terminal
 
-> Links: [github repo](https://github.com/nrjdalal/ai-x-terminal) / [npm package](https://www.npmjs.com/package/ai-x-terminal)
+> Links: [GitHub Repo](https://github.com/nrjdalal/ai-x-terminal) / [npm Package](https://www.npmjs.com/package/ai-x-terminal)
 
 ![npm version](https://img.shields.io/npm/v/ai-x-terminal)
 ![npm downloads](https://img.shields.io/npm/dt/ai-x-terminal)
@@ -15,6 +15,8 @@
 [![asciicast](https://asciinema.org/a/US2lyqiL6vNzDxH681x6LFnLN.svg)](https://asciinema.org/a/US2lyqiL6vNzDxH681x6LFnLN)
 
 ## Installation
+
+To install AI X Terminal globally, you can use either npm or bun:
 
 ```bash
 npm install -g ai-x-terminal
@@ -32,7 +34,8 @@ bun add -g ai-x-terminal
   - `-f, --file <file>`: Append specified file content to the AI prompt.
   - `-w, --workspace`: Append contents of all files in the current directory to the prompt.
   - `-ls, --list`: List all filenames in the current directory.
-- **OpenAI Integration**: Initialize with your OpenAI API key for a secure future use.
+  - `-p, --persona <persona>`: Customize the AI's persona for responses.
+- **OpenAI Integration**: Initialize with your OpenAI API key for future use without re-entering.
 
 ## Usage Examples
 
@@ -60,14 +63,46 @@ ax -w "Provide an overview of this project."
 ax -ls "Which of these files are safe to delete?"
 ```
 
+### Customizing AI Persona
+
+```bash
+ax -p "You are a coding expert" "Explain this code snippet."
+```
+
 ---
 
-**Disclaimer**: Keep your API key confidential. Never share it publicly.
+## Configuration
+
+AI X Terminal uses a `.ax.json` configuration file to store settings like the persona. Modify this file to personalize your interactions.
+
+## Contributing
+
+Contributions are welcome! If you have suggestions, feature requests, or bug reports, please create an issue or submit a pull request. Adhere to the code style used in the project and ensure your changes do not break any existing functionality.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/nrjdalal/ai-x-terminal/blob/main/LICENSE) file for details.
+
+## Disclaimer
+
+Keep your OpenAI API key confidential. Never share it publicly.
 
 ## Upcoming Features
 
-- Set custom prompt
-- Multiple API support
-- Contextual AI
+- Custom prompt configurations
+- Multi-API support
+- Contextual AI enhancements
 
 For more features and updates, refer to our [changelog](https://github.com/nrjdalal/ai-x-terminal/releases).
+
+```
+
+### Key Additions:
+1. **Configuration Section**: Explains how to use `.ax.json`.
+2. **Contributing**: Invites user contributions and sets expectations.
+3. **Installation Details**: More clarity on installation via npm and bun.
+4. **Usage Examples**: Improved with a new example of persona customization.
+5. **Disclaimer note**: To remind users about API key security.
+
+This will give prospective users a comprehensive overview and understanding of how to use and contribute to your project.
+```

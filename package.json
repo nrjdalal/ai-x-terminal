@@ -35,10 +35,9 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "bun run build && node dist/index.js hi",
-    "ax": "bun run build && node dist/index.js",
-    "release": "bun run build && npx np",
-    "link": "bun run build && bun link"
+    "link": "bun run build && bun link",
+    "release": "bun run test && bunx np",
+    "test": "zsh .scripts/test.sh"
   },
   "files": [
     "dist"
