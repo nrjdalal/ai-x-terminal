@@ -19,10 +19,10 @@ export async function streamCompletion(
   })
 
   let chunker = ''
+  let codeblock = 0
   let holdMode = false
   let slidingWindow = []
   let turnOffHoldMode = false
-  let codeblock = 0
 
   for await (const part of stream) {
     if (part.choices && part.choices[0]?.delta?.content) {
@@ -34,14 +34,14 @@ export async function streamCompletion(
       }
 
       if (holdMode || chunk.includes('`')) {
+        holdMode = true
         chunker += chunk
         slidingWindow.push(chunk)
-        holdMode = true
 
         if (slidingWindow.length === 3) {
           process.stdout.write(chalk.green(chunker))
-          chunker = ''
           turnOffHoldMode = true
+          chunker = ''
 
           if (slidingWindow.join('').includes('```')) {
             if (codeblock === 1) {
