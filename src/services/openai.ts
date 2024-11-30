@@ -54,6 +54,10 @@ export async function streamCompletion(
         }
       }
 
+      if (codeblock === 1) {
+        process.stdout.write(chalk.warn(chunk))
+      }
+
       if (!holdMode) {
         process.stdout.write(chunk)
       }
