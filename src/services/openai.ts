@@ -21,6 +21,7 @@ export async function streamCompletion(
 
   let chunker: any = ''
   let codeblock = 0
+  let inCodeBlock = false
   let holdMode = false
   let slidingWindow = []
   let turnOffHoldMode = false
@@ -35,45 +36,39 @@ export async function streamCompletion(
       }
 
       if (holdMode || chunk.includes('`')) {
-        holdMode = true
-        chunker += chunk
+        // holdMode = true
+        // chunker += chunk
         slidingWindow.push(chunk)
 
         if (slidingWindow.length === 3) {
           if (slidingWindow.join('').includes('```')) {
-            if (codeblock === 1) {
-              codeblock--
+            console.log(chalk.yellow(slidingWindow))
 
-              turnOffHoldMode = true
-              // chunker = chunker.split('```')
+            // if (inCodeBlock && codeblock === 1) {
+            //   inCodeBlock = false
+            //   codeblock = 2
+            //   process.stdout.write(chalk.green(chunker))
+            //   console.log(chalk.warn('Code block ended.'))
+            // }
 
-              // const precode = chunker[0]
-              // const code = {
-              //   language: chunker[1].split('\n')[0],
-              //   content: chunker[1].split('\n').slice(1).join('\n'),
-              // }
-              // const postcode = chunker[2]
-
-              // process.stdout.write(
-              //   precode +
-              //     highlight(code.content, {
-              //       language: code.language,
-              //       ignoreIllegals: true,
-              //     }) +
-              //     postcode
-              // )
-
-              process.stdout.write(chalk.green(chunker))
-              chunker = ''
-            }
-            if (codeblock === 0) codeblock++
+            // if (!inCodeBlock && codeblock === 0) {
+            //   inCodeBlock = true
+            //   codeblock = 1
+            //   console.log(chalk.warn('Code block started.'))
+            // }
           }
 
-          if (codeblock !== 1) {
-            turnOffHoldMode = true
-            process.stdout.write(chalk.green(chunker))
-            chunker = ''
-          }
+          // if (!inCodeBlock && codeblock === 2) {
+          //   codeblock = 0
+          //   turnOffHoldMode = true
+          //   chunker = ''
+          // }
+
+          // if (!inCodeBlock && codeblock === 0) {
+          //   turnOffHoldMode = true
+          //   process.stdout.write(chalk.warn(chunker))
+          //   chunker = ''
+          // }
 
           slidingWindow = []
         }
@@ -84,4 +79,24 @@ export async function streamCompletion(
       }
     }
   }
+}
+
+const colorCode = (chunk: string) => {
+  const chunkParts = chunk.split('```')
+
+  const code = {
+    language: chunkParts[1].split('\n')[0],
+    content: chunkParts[1].split('\n').slice(1).join('\n'),
+  }
+  const precode = chunkParts[0] + '```' + code.language + '\n'
+  const postcode = '```' + '\n' + chunkParts[2]
+
+  return (
+    precode +
+    highlight(code.content, {
+      language: code.language,
+      ignoreIllegals: true,
+    }) +
+    postcode
+  )
 }
