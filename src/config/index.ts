@@ -13,5 +13,5 @@ export function loadConfig(): any {
 
 export function saveConfig(config: any) {
   const configPath = path.join(process.cwd(), '.ax.json')
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n')
 }
