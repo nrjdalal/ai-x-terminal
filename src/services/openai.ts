@@ -27,8 +27,8 @@ export async function streamCompletion(
 
       buffer += chunk // Append the chunk to the buffer
 
-      while (buffer.includes('```')) {
-        const [before, after] = buffer.split('```', 2)
+      while (buffer.includes(`\`\`\``)) {
+        const [before, after] = buffer.split(`\`\`\``, 2)
 
         if (insideCodeBlock) {
           // Closing backticks detected
