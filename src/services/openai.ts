@@ -18,51 +18,41 @@ export async function streamCompletion(
     stream: true,
   })
 
-  let slidingWindow = []
+  let buffer = '' // Holds the ongoing stream
+  let insideCodeBlock = false // Tracks if inside a code block
 
   for await (const part of stream) {
     if (part.choices && part.choices[0]?.delta?.content) {
       const chunk = part.choices[0].delta.content
 
-      let hold = false
-      let releaseHold = false
+      buffer += chunk // Append the chunk to the buffer
 
-      if (chunk.includes('`')) {
-        hold = true
-        releaseHold = false
-        slidingWindow.push(chunk)
+      while (buffer.includes('```')) {
+        const [before, after] = buffer.split('```', 2)
 
-        if (slidingWindow.length && slidingWindow.length <= 3) {
-          if (slidingHasCode(slidingWindow)) {
-            process.stdout.write(
-              chalk.yellow(
-                slidingWindow.join('').replace(/`.*`/, `\`\`\``).trim()
-              )
-            )
-            slidingWindow = []
-            releaseHold = true
-          }
-
-          if (slidingWindow.length === 3) {
-            process.stdout.write(chalk.blue(slidingWindow.join('')))
-            slidingWindow = []
-            releaseHold = true
-          }
+        if (insideCodeBlock) {
+          // Closing backticks detected
+          process.stdout.write(chalk.blue(`\`\`\`${before}\`\`\``))
+          insideCodeBlock = false
+        } else {
+          // Opening backticks detected
+          process.stdout.write(chalk.yellow(before))
+          insideCodeBlock = true
         }
+
+        buffer = after // Update the buffer with the remaining data
       }
 
-      if (!hold) {
-        process.stdout.write(chunk)
-      }
-
-      if (releaseHold) {
-        hold = false
-        releaseHold = false
+      // If no backticks detected, print normally if not inside a code block
+      if (!insideCodeBlock) {
+        process.stdout.write(buffer)
+        buffer = '' // Clear the buffer
       }
     }
   }
-}
 
-const slidingHasCode = (window: string[]) => {
-  return window.join('').includes(`\`\`\``)
+  // Flush remaining buffer after the stream ends
+  if (buffer) {
+    process.stdout.write(insideCodeBlock ? chalk.blue(buffer) : buffer)
+  }
 }
