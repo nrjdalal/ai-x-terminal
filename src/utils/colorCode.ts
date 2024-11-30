@@ -1,7 +1,7 @@
 import { highlight } from 'cli-highlight'
 
-const colorCode = (chunk: string) => {
-  const chunkParts = chunk.split('```')
+export const colorCode = (codeBlock: string) => {
+  const chunkParts = codeBlock.split('```')
 
   const code = {
     language: chunkParts[1].split('\n')[0],

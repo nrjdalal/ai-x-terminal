@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai'
 import chalk from '../utils/chalk.js'
+import { colorCode } from '../utils/colorCode.js'
 
 export async function streamCompletion(
   openai: OpenAI,
@@ -32,7 +33,7 @@ export async function streamCompletion(
 
         if (insideCodeBlock) {
           // Closing backticks detected
-          process.stdout.write(chalk.blue(`\`\`\`${before}\`\`\``))
+          process.stdout.write(colorCode(`\`\`\`${before}\`\`\``))
           insideCodeBlock = false
         } else {
           // Opening backticks detected
