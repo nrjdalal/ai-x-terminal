@@ -19,66 +19,51 @@ export async function streamCompletion(
     stream: true,
   })
 
-  let chunker: any = ''
-  let codeblock = 0
-  let inCodeBlock = false
-  let holdMode = false
   let slidingWindow = []
-  let turnOffHoldMode = false
 
   for await (const part of stream) {
     if (part.choices && part.choices[0]?.delta?.content) {
       const chunk = part.choices[0].delta.content
 
-      if (turnOffHoldMode) {
-        holdMode = false
-        turnOffHoldMode = false
-      }
+      let hold = false
+      let releaseHold = false
 
-      if (holdMode || chunk.includes('`')) {
-        // holdMode = true
-        // chunker += chunk
+      if (chunk.includes('`')) {
+        hold = true
+        releaseHold = false
         slidingWindow.push(chunk)
 
-        if (slidingWindow.length === 3) {
-          if (slidingWindow.join('').includes('```')) {
-            console.log(chalk.yellow(slidingWindow))
-
-            // if (inCodeBlock && codeblock === 1) {
-            //   inCodeBlock = false
-            //   codeblock = 2
-            //   process.stdout.write(chalk.green(chunker))
-            //   console.log(chalk.warn('Code block ended.'))
-            // }
-
-            // if (!inCodeBlock && codeblock === 0) {
-            //   inCodeBlock = true
-            //   codeblock = 1
-            //   console.log(chalk.warn('Code block started.'))
-            // }
+        if (slidingWindow.length && slidingWindow.length <= 3) {
+          if (slidingHasCode(slidingWindow)) {
+            process.stdout.write(
+              chalk.yellow(slidingWindow.join('').replace(/`.*`/, '```').trim())
+            )
+            slidingWindow = []
+            releaseHold = true
           }
 
-          // if (!inCodeBlock && codeblock === 2) {
-          //   codeblock = 0
-          //   turnOffHoldMode = true
-          //   chunker = ''
-          // }
-
-          // if (!inCodeBlock && codeblock === 0) {
-          //   turnOffHoldMode = true
-          //   process.stdout.write(chalk.warn(chunker))
-          //   chunker = ''
-          // }
-
-          slidingWindow = []
+          if (slidingWindow.length === 3) {
+            process.stdout.write(chalk.blue(slidingWindow.join('')))
+            slidingWindow = []
+            releaseHold = true
+          }
         }
       }
 
-      if (!holdMode) {
+      if (!hold) {
         process.stdout.write(chunk)
+      }
+
+      if (releaseHold) {
+        hold = false
+        releaseHold = false
       }
     }
   }
+}
+
+const slidingHasCode = (window: string[]) => {
+  return window.join('').includes('```')
 }
 
 const colorCode = (chunk: string) => {
