@@ -48,6 +48,7 @@
   "dependencies": {
     "@inquirer/password": "^4.0.2",
     "chalk": "^5.3.0",
+    "cli-highlight": "^2.1.11",
     "commander": "^12.1.0",
     "globby": "^14.0.2",
     "openai": "^4.72.0"
