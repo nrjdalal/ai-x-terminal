@@ -36,7 +36,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "link": "bun run build && bun link",
-    "release": "bun run test && bunx np",
+    "release": "bunx np",
     "test": "zsh .scripts/test.sh"
   },
   "files": [
