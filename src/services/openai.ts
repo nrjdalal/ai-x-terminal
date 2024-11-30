@@ -1,6 +1,5 @@
 import { OpenAI } from 'openai'
 import chalk from '../utils/chalk.js'
-import { highlight } from 'cli-highlight'
 
 export async function streamCompletion(
   openai: OpenAI,
@@ -36,7 +35,9 @@ export async function streamCompletion(
         if (slidingWindow.length && slidingWindow.length <= 3) {
           if (slidingHasCode(slidingWindow)) {
             process.stdout.write(
-              chalk.yellow(slidingWindow.join('').replace(/`.*`/, '```').trim())
+              chalk.yellow(
+                slidingWindow.join('').replace(/`.*`/, `\`\`\``).trim()
+              )
             )
             slidingWindow = []
             releaseHold = true
@@ -63,25 +64,5 @@ export async function streamCompletion(
 }
 
 const slidingHasCode = (window: string[]) => {
-  return window.join('').includes('```')
-}
-
-const colorCode = (chunk: string) => {
-  const chunkParts = chunk.split('```')
-
-  const code = {
-    language: chunkParts[1].split('\n')[0],
-    content: chunkParts[1].split('\n').slice(1).join('\n'),
-  }
-  const precode = chunkParts[0] + '```' + code.language + '\n'
-  const postcode = '```' + '\n' + chunkParts[2]
-
-  return (
-    precode +
-    highlight(code.content, {
-      language: code.language,
-      ignoreIllegals: true,
-    }) +
-    postcode
-  )
+  return window.join('').includes(`\`\`\``)
 }
