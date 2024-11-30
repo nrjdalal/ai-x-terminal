@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai'
 import chalk from '../utils/chalk.js'
+import { highlight } from 'cli-highlight'
 
 export async function streamCompletion(
   openai: OpenAI,
@@ -18,7 +19,7 @@ export async function streamCompletion(
     stream: true,
   })
 
-  let chunker = ''
+  let chunker: any = ''
   let codeblock = 0
   let holdMode = false
   let slidingWindow = []
@@ -39,23 +40,43 @@ export async function streamCompletion(
         slidingWindow.push(chunk)
 
         if (slidingWindow.length === 3) {
-          process.stdout.write(chalk.green(chunker))
-          turnOffHoldMode = true
-          chunker = ''
-
           if (slidingWindow.join('').includes('```')) {
             if (codeblock === 1) {
               codeblock--
+
+              turnOffHoldMode = true
+              // chunker = chunker.split('```')
+
+              // const precode = chunker[0]
+              // const code = {
+              //   language: chunker[1].split('\n')[0],
+              //   content: chunker[1].split('\n').slice(1).join('\n'),
+              // }
+              // const postcode = chunker[2]
+
+              // process.stdout.write(
+              //   precode +
+              //     highlight(code.content, {
+              //       language: code.language,
+              //       ignoreIllegals: true,
+              //     }) +
+              //     postcode
+              // )
+
+              process.stdout.write(chalk.green(chunker))
+              chunker = ''
             }
-            codeblock++
+            if (codeblock === 0) codeblock++
+          }
+
+          if (codeblock !== 1) {
+            turnOffHoldMode = true
+            process.stdout.write(chalk.green(chunker))
+            chunker = ''
           }
 
           slidingWindow = []
         }
-      }
-
-      if (codeblock === 1) {
-        process.stdout.write(chalk.warn(chunk))
       }
 
       if (!holdMode) {
