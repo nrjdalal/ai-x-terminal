@@ -7,6 +7,7 @@ export function initializeCLI() {
     .option('-w, --workspace', 'append all files in directory to prompt')
     .option('-ls, --list', 'list all filenames in directory')
     .option('-p, --persona <persona>', 'set custom persona')
+    .option('-r, --replace', 'replace content of files after completion')
     .arguments('[args...]')
 
   return program

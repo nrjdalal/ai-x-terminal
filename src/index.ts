@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-import path from 'path'
 import fs from 'fs'
 import { initializeCLI } from './cli/index.js'
 import { loadAPIKey } from './utils/api-key.js'
-import { streamCompletion } from './services/openai.js'
+import { streamCompletion, parseCompletion } from './services/openai.js'
 import { OpenAI } from 'openai'
 import { loadConfig, saveConfig } from './config/index.js'
 import { globby } from 'globby'
@@ -27,6 +26,17 @@ const excludePatterns = [
   'Public/**',
 ]
 
+// New function to handle file replacement
+async function replaceFileContent(filePath: string, newContent: string) {
+  try {
+    const formattedContent = parseCompletion(newContent)
+    fs.writeFileSync(filePath, formattedContent)
+    console.log(`Successfully replaced content in ${filePath}`)
+  } catch (error) {
+    console.error(`Failed to replace content in ${filePath}:`, error)
+  }
+}
+
 async function main() {
   const program = initializeCLI()
 
@@ -44,16 +54,19 @@ async function main() {
     }
 
     const openai = new OpenAI({ apiKey })
-
     let prompt = args.join(' ') || 'Hello from AI Terminal!'
     let fileCount = 0
     const query = prompt
+    let filesToReplace: string[] = []
 
     const processFiles = async (files: string[]) => {
       for (const file of files) {
         const fileContents = fs.readFileSync(file, 'utf-8').trim() + '\n---'
         fileCount++
         prompt += `\n\n--- ${file}\n${fileContents}`
+        if (opts.replace) {
+          filesToReplace.push(file)
+        }
       }
     }
 
@@ -102,7 +115,15 @@ async function main() {
           }\x1b[0m`
     )
 
-    await streamCompletion(openai, prompt, config.persona)
+    // Stream completion
+    const completion = await streamCompletion(openai, prompt, config)
+
+    // Replace file content if required
+    if (opts.replace && filesToReplace.length > 0 && completion) {
+      for (const file of filesToReplace) {
+        replaceFileContent(file, completion)
+      }
+    }
   })
 
   program.parse()
