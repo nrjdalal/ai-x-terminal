@@ -1,4 +1,4 @@
-import { program } from 'commander'
+import { program } from 'commander';
 
 export function initializeCLI() {
   program
@@ -8,7 +8,7 @@ export function initializeCLI() {
     .option('-ls, --list', 'list all filenames in directory')
     .option('-p, --persona <persona>', 'set custom persona')
     .option('-r, --replace', 'replace content of files after completion')
-    .arguments('[args...]')
+    .arguments('[args...]');
 
-  return program
+  return program;
 }
