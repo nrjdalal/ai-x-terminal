@@ -40,6 +40,7 @@ export async function streamCompletion(
               spinner.stop()
               spinner = null
             }
+            // process.stdout.write(chalk.blue(`\`\`\`${before}\`\`\``))
             // ~ logic to color and replace code block
             process.stdout.write(manipulateCode(`\`\`\`${before}\`\`\``, opts))
             insideCodeBlock = false

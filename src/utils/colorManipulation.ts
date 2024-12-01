@@ -10,8 +10,7 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
       language:
         codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[0] ||
         'plaintext',
-      langpath:
-        codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[1] || '__temp__',
+      langpath: codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[1],
       content: codeBlock
         .split(`\`\`\``)
         .slice(1, -1)
@@ -21,7 +20,6 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
         .join('\n'),
     }
 
-    // add code block to .dev/logs.txt if it doesn't exist create it
     if (!fs.existsSync('.dev')) {
       fs.mkdirSync('.dev')
     }
@@ -29,12 +27,13 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
     fs.writeFileSync('.dev/logs.txt', JSON.stringify(code, null, 2) + '\n')
 
     const precode =
-      codeBlock.slice(0, codeBlock.indexOf(`\`\`\``)) +
-      `\`\`\`` +
-      code.language +
-      ' ' +
-      code.langpath +
-      '\n'
+      (
+        codeBlock.slice(0, codeBlock.indexOf(`\`\`\``)) +
+        `\`\`\`` +
+        code.language +
+        ' ' +
+        code.langpath
+      ).trimEnd() + '\n'
     const lastOccurence = codeBlock.lastIndexOf(`\`\`\``)
     const postcode = `\`\`\`` + codeBlock.slice(lastOccurence + 3)
 
