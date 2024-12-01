@@ -10,7 +10,7 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
       language:
         codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[0] ||
         'plaintext',
-      langpath: codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[1],
+      langpath: codeBlock.split(`\`\`\``)[1].split('\n')[0].split(' ')[1] || '',
       content: codeBlock
         .split(`\`\`\``)
         .slice(1, -1)
@@ -18,6 +18,11 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
         .split('\n')
         .slice(1)
         .join('\n'),
+    }
+
+    // if langpath starts with path: split it and get the path
+    if (code.langpath && code.langpath.startsWith('path:')) {
+      code.langpath = code.langpath.split('path:')[1]
     }
 
     if (!fs.existsSync('.dev')) {
@@ -37,7 +42,7 @@ export const manipulateCode = (codeBlock: string, opts: any) => {
     const lastOccurence = codeBlock.lastIndexOf(`\`\`\``)
     const postcode = `\`\`\`` + codeBlock.slice(lastOccurence + 3)
 
-    if (opts.replace) {
+    if (opts.replace && code.langpath) {
       try {
         fs.writeFileSync(code.langpath, code.content)
       } catch (err) {
