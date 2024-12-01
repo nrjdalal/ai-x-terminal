@@ -3,7 +3,7 @@
 import fs from 'fs'
 import { initializeCLI } from './cli/index.js'
 import { loadAPIKey } from './utils/api-key.js'
-import { streamCompletion, parseCompletion } from './services/openai.js'
+import { streamCompletion } from './services/openai.js'
 import { OpenAI } from 'openai'
 import { loadConfig, saveConfig } from './config/index.js'
 import { globby } from 'globby'
@@ -25,17 +25,6 @@ const excludePatterns = [
   'Pictures/**',
   'Public/**',
 ]
-
-// New function to handle file replacement
-async function replaceFileContent(filePath: string, newContent: string) {
-  try {
-    const formattedContent = parseCompletion(newContent)
-    fs.writeFileSync(filePath, formattedContent)
-    console.log(`Successfully replaced content in ${filePath}`)
-  } catch (error) {
-    console.error(`Failed to replace content in ${filePath}:`, error)
-  }
-}
 
 async function main() {
   const program = initializeCLI()
@@ -116,14 +105,7 @@ async function main() {
     )
 
     // Stream completion
-    const completion = await streamCompletion(openai, prompt, config)
-
-    // Replace file content if required
-    if (opts.replace && filesToReplace.length > 0 && completion) {
-      for (const file of filesToReplace) {
-        replaceFileContent(file, completion)
-      }
-    }
+    await streamCompletion(openai, prompt, config, opts)
   })
 
   program.parse()

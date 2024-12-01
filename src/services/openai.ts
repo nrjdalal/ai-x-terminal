@@ -1,12 +1,13 @@
 import { OpenAI } from 'openai'
 import chalk from '../utils/chalk.js'
 import ora, { Ora } from 'ora'
-import { colorCode } from '../utils/colorCode.js'
+import { manipulateCode } from '../utils/colorManipulation.js'
 
 export async function streamCompletion(
   openai: OpenAI,
   prompt: string,
-  config: any
+  config: any,
+  opts: any
 ): Promise<string> {
   let spinner: Ora | null = null
   let finalContent = ''
@@ -39,7 +40,8 @@ export async function streamCompletion(
               spinner.stop()
               spinner = null
             }
-            process.stdout.write(colorCode(`\`\`\`${before}\`\`\``))
+            // ~ logic to color and replace code block
+            process.stdout.write(manipulateCode(`\`\`\`${before}\`\`\``, opts))
             insideCodeBlock = false
           } else {
             process.stdout.write(chalk.yellow(before))
@@ -90,9 +92,4 @@ export async function streamCompletion(
     }
   }
   return finalContent
-}
-
-export function parseCompletion(completion: string): string {
-  // Add parsing logic here if needed to handle multiple code blocks or delimiters
-  return completion
 }
