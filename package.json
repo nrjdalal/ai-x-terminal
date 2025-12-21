@@ -52,7 +52,7 @@
     "commander": "^12.1.0",
     "globby": "^14.0.2",
     "openai": "^4.72.0",
-    "ora": "^8.1.1"
+    "ora": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
